@@ -4,7 +4,7 @@ const app = express();
 const port = process.env.PORT || 4000;
 const routes = require("./routes/users");
 
-const { users } = require("./data");
+// let { users } = require("./data");
 
 app.use(express.json());
 app.use(routes);
