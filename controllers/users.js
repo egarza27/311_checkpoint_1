@@ -1,26 +1,12 @@
-const { raw } = require("body-parser");
-let { users } = require("../data/index");
-const { use } = require("../routes/users");
+let { users } = require("../data");
 
 module.exports = {
   list: (req, res) => res.json(users),
   show: (req, res) => {
-    let userId = req.params.id;
-    // res.json(users.find((user) => user.id === parseInt(userId)));
-    users.find((user) => {
-      if (user.id === parseInt(userId)) {
-        return {
-          id: parseInt(req.params.id),
-          ...req.body,
-        };
-      }
-      if (user.id !== parseInt(req.params.id)) {
-        res.status(404).send("User not found");
-      }
-      return user;
-    });
-    // console.log(req.body);
-    res.json(req.body);
+    if (!users.find((user) => user.id === parseInt(req.params.id))) {
+      return res.status(404).send("User not found");
+    }
+    res.json(users.find((user) => user.id === parseInt(req.params.id)));
   },
   create: (req, res) => {
     const user = {
@@ -33,6 +19,9 @@ module.exports = {
   },
   update: (req, res) => {
     console.log(req.body);
+    if (!users.find((user) => user.id === parseInt(req.params.id))) {
+      return res.status(400).send("User not found");
+    }
     users = users.map((user) => {
       if (user.id === parseInt(req.params.id)) {
         return {
@@ -40,17 +29,19 @@ module.exports = {
           ...req.body,
         };
       }
-      if (user.id !== parseInt(req.params.id)) {
-        res.status(404).send("User not found");
-      }
       return user;
     });
     res.json(req.body);
+    console.log(users);
   },
   delete: (req, res) => {
-    let userId = req.params.id;
-    let deletedUser = users.filter((obj) => obj.id !== parseInt(userId));
+    console.log(req.body);
+    if (!users.find((user) => user.id === parseInt(req.params.id))) {
+      return res.status(400).send("User not found");
+    }
+    let deletedUser = users.filter((obj) => obj.id !== parseInt(req.params.id));
     console.log(deletedUser);
+    console.log(users);
     res.send("User deleted");
   },
 };
